@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سينما بلس | أحدث الأفلام الحصرية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e50914; /* أحمر نيتفليكس */
+            --secondary: #b20710;
+            --bg: #000000;
+            --card-bg: #141414;
+            --text: #ffffff;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        [data-theme="light"] {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --text: #1d1d1f;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        body { background-color: var(--bg); color: var(--text); padding-top: 80px; min-height: 100vh; }
+        
+        /* الهيدر المحسن */
+        nav { 
+            position: fixed; top: 0; width: 100%; padding: 15px 5%; 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            backdrop-filter: blur(10px); display: flex; justify-content: space-between; 
+            align-items: center; z-index: 1000;
+        }
+        .back-btn { text-decoration: none; color: var(--text); font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .logo { color: var(--primary); font-weight: 900; font-size: 1.5rem; letter-spacing: 1px; }
+
+        header { text-align: center; padding: 40px 20px; }
+        header h1 { font-size: 3rem; font-weight: 900; margin-bottom: 10px; }
+        header h1 span { color: var(--primary); }
+
+        /* شريط البحث والفلترة */
+        .search-section { max-width: 600px; margin: 0 auto 30px; padding: 0 20px; }
+        .search-bar { 
+            width: 100%; padding: 12px 25px; border-radius: 50px; 
+            border: 1px solid var(--border); background: var(--card-bg); 
+            color: var(--text); outline: none; font-size: 1rem;
+        }
+
+        .filter-container { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+        .filter-btn { 
+            background: var(--card-bg); border: 1px solid var(--border); 
+            color: var(--text); padding: 8px 22px; border-radius: 8px; 
+            cursor: pointer; font-weight: 600; 
+        }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* شبكة الأفلام */
+        .movies-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 25px; max-width: 1400px; margin: 0 auto; padding: 20px; 
+        }
+
+        .movie-card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
+            position: relative; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .poster-wrapper { position: relative; width: 100%; height: 320px; overflow: hidden; }
+        .movie-card img { width: 100%; height: 100%; object-fit: cover; }
+        .movie-card:hover img { transform: scale(1.1); filter: brightness(0.7); }
+
+        /* تفاصيل عائمة على البوستر */
+        .quality-tag { position: absolute; top: 10px; right: 10px; background: var(--primary); color: white; padding: 2px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .imdb-rating { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: #ffbd00; padding: 2px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        
+        .movie-overlay {
+            position: absolute; bottom: 0; width: 100%; padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            transform: translateY(20px); opacity: 0;
+        }
+        .movie-card:hover .movie-overlay { transform: translateY(0); opacity: 1; }
+
+        .movie-info { padding: 15px; }
+        .movie-info h3 { font-size: 1.1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .movie-info .meta { font-size: 0.8rem; color: #888; display: flex; justify-content: space-between; }
+
+        .dl-btn { 
+            background: var(--primary); color: white; text-decoration: none; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; 
+            padding: 10px; border-radius: 8px; font-weight: 800; margin-top: 10px; 
+            font-size: 0.9rem;
+        }
+        .dl-btn:hover { background: var(--secondary); }
+
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        @media (max-width: 480px) {
+            .movies-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .poster-wrapper { height: 250px; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <nav>
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> الرئيسية</a>
+        <div class="logo">CINEMA PLUS</div>
+        <button onclick="toggleTheme()" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🌓</button>
+    </nav>
+
+    <header>
+        <h1>عالم <span>الأفلام</span></h1>
+        <p>شاهد وحمل أحدث الحصريات بجودة BluRay</p>
+    </header>
+
+    <div class="search-section">
+        <input type="text" class="search-bar" id="movieSearch" placeholder="بحث عن فيلم...">
+    </div>
+
+    <div class="filter-container">
+        <button class="filter-btn active" data-category="all">الكل</button>
+        <button class="filter-btn" data-category="action">أكشن</button>
+        <button class="filter-btn" data-category="horror">رعب</button>
+        <button class="filter-btn" data-category="drama">دراما</button>
+        <button class="filter-btn" data-category="animation">أنيميشن</button>
+    </div>
+
+    <div class="movies-grid" id="moviesGrid">
+        <div class="movie-card" data-category="action">
+            <div class="poster-wrapper">
+                <span class="quality-tag">4K</span>
+                <span class="imdb-rating"><i class="fas fa-star"></i> 8.9</span>
+                <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDp9QmSbmRkPdbG9fky.jpg" alt="Batman">
+                <div class="movie-overlay">
+                    <p style="font-size: 0.8rem;">عندما يظهر عدو جديد، يضطر باتمان لمواجهة ماضيه...</p>
+                </div>
+            </div>
+            <div class="movie-info">
+                <h3>The Batman</h3>
+                <div class="meta"><span>2022</span><span>2h 56m</span></div>
+                <a href="#" class="dl-btn"><i class="fas fa-play"></i> مشاهدة الآن</a>
+            </div>
+        </div>
+
+        <div class="movie-card" data-category="animation">
+            <div class="poster-wrapper">
+                <span class="quality-tag">FHD</span>
+                <span class="imdb-rating"><i class="fas fa-star"></i> 9.0</span>
+                <img src="https://image.tmdb.org/t/p/w500/8Gxv8S7HaU0STqOVv9U979Fp1pU.jpg" alt="Spider-Man">
+                <div class="movie-overlay">
+                    <p style="font-size: 0.8rem;">مغامرة عبر الأكوان المتعددة مع مايلز موراليس.</p>
+                </div>
+            </div>
+            <div class="movie-info">
+                <h3>Spider-Verse</h3>
+                <div class="meta"><span>2023</span><span>2h 20m</span></div>
+                <a href="#" class="dl-btn"><i class="fas fa-download"></i> تحميل</a>
+            </div>
+        </div>
+
+        <div class="movie-card" data-category="horror">
+            <div class="poster-wrapper">
+                <span class="quality-tag">BluRay</span>
+                <span class="imdb-rating"><i class="fas fa-star"></i> 7.5</span>
+                <img src="https://image.tmdb.org/t/p/w500/m67baVotbiUP0p79Tf7S3X99J9s.jpg" alt="Evil Dead">
+            </div>
+            <div class="movie-info">
+                <h3>Evil Dead Rise</h3>
+                <div class="meta"><span>2023</span><span>1h 36m</span></div>
+                <a href="#" class="dl-btn"><i class="fas fa-download"></i> تحميل</a>
+            </div>
+        </div>
+        
+        <div class="movie-card" data-category="action">
+            <div class="poster-wrapper">
+                <span class="quality-tag">4K</span>
+                <span class="imdb-rating"><i class="fas fa-star"></i> 8.0</span>
+                <img src="https://image.tmdb.org/t/p/w500/r7DuyYJszVI23vGzd7m8uRJuunO.jpg" alt="John Wick">
+            </div>
+            <div class="movie-info">
+                <h3>John Wick: Ch 4</h3>
+                <div class="meta"><span>2023</span><span>2h 49m</span></div>
+                <a href="#" class="dl-btn"><i class="fas fa-download"></i> تحميل</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // كود الفلترة المحسن
+        const btns = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.movie-card');
+        const searchInput = document.getElementById('movieSearch');
+
+        function filterMovies() {
+            const activeCat = document.querySelector('.filter-btn.active').getAttribute('data-category');
+            const searchText = searchInput.value.toLowerCase();
+
+            cards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                
+                const matchesCat = (activeCat === 'all' || category === activeCat);
+                const matchesSearch = title.includes(searchText);
+
+                if(matchesCat && matchesSearch) {
+                    card.style.display = 'block';
+                    card.style.animation = 'zoomIn 0.4s ease forwards';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterMovies();
+            });
+        });
+
+        searchInput.addEventListener('input', filterMovies);
+
+        function toggleTheme() {
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+/* الألوان والثيم الموحد */
+:root {
+    --primary: #833ab4;
+    --secondary: #fd1d1d;
+    --bg: #05070a;
+    --card-bg: #11141d;
+    --text: #f1f5f9;
+    --border: rgba(131, 58, 180, 0.2);
+}
+
+/* تنسيقات عامة لكل الأجهزة */
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* لمنع التزحلق الجانبي في الموبايل */
+}
+
+/* نظام الشبكة المرن (Grid) */
+.games-grid, .programs-grid, .main-grid {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    /* الافتراضي للكمبيوتر: 3 أو 4 أعمدة */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* تنسيق البطاقة الموحد */
+.card, .game-card, .soft-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    transition: 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* الصور داخل الموبايل والكمبيوتر */
+.img-container {
+    width: 100%;
+    height: 300px; /* للكمبيوتر */
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* ============================================= */
+/* تعديلات خاصة بالموبايل (الشاشات الصغيرة) */
+/* ============================================= */
+@media (max-width: 768px) {
+    /* جعل العنوان أصغر ليتناسب مع شاشة الفون */
+    header h1 {
+        font-size: 1.8rem !important;
+        padding: 0 10px;
+    }
+
+    /* تغيير توزيع البطاقات في الموبايل ليكون 2 في كل صف أو 1 */
+    .games-grid, .programs-grid {
+        grid-template-columns: repeat(2, 1fr); /* عمودين في الموبايل */
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .img-container {
+        height: 200px; /* تصغير ارتفاع الصور في الموبايل */
+    }
+
+    /* تصغير حجم الخط والأزرار في الموبايل */
+    .game-info h3, .soft-card h3 {
+        font-size: 0.9rem !important;
+    }
+
+    .btn, .download-btn {
+        padding: 10px !important;
+        font-size: 0.8rem !important;
+    }
+
+    nav {
+        padding: 10px 5% !important;
+    }
+}
+
+/* للهواتف الصغيرة جداً */
+@media (max-width: 400px) {
+    .games-grid, .programs-grid {
+        grid-template-columns: 1fr; /* عمود واحد فقط */
+    }
+}
